@@ -1,0 +1,25 @@
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# Build
+**/target/
+**/out/
+*.class
+
+# Logs and nginx runtime
+*.log
+frontend/logs/
+frontend/temp/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Env
+.env
+.env.*
