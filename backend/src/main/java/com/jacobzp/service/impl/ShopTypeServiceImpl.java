@@ -3,7 +3,7 @@ package com.jacobzp.service.impl;
 import com.jacobzp.entity.ShopType;
 import com.jacobzp.mapper.ShopTypeMapper;
 import com.jacobzp.service.IShopTypeService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

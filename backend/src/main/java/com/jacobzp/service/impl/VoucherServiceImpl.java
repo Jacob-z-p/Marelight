@@ -1,6 +1,6 @@
 package com.jacobzp.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jacobzp.dto.Result;
 import com.jacobzp.entity.Voucher;
 import com.jacobzp.mapper.VoucherMapper;
@@ -10,7 +10,7 @@ import com.jacobzp.service.IVoucherService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**

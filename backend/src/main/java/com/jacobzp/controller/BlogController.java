@@ -12,7 +12,7 @@ import com.jacobzp.utils.SystemConstants;
 import com.jacobzp.utils.UserHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**

@@ -3,7 +3,7 @@ package com.jacobzp.service.impl;
 import com.jacobzp.entity.BlogComments;
 import com.jacobzp.mapper.BlogCommentsMapper;
 import com.jacobzp.service.IBlogCommentsService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

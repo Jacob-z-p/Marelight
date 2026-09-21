@@ -3,7 +3,7 @@ package com.jacobzp.service.impl;
 import com.jacobzp.entity.UserInfo;
 import com.jacobzp.mapper.UserInfoMapper;
 import com.jacobzp.service.IUserInfoService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

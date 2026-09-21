@@ -1,7 +1,7 @@
 package com.jacobzp.service;
 
 import com.jacobzp.entity.ShopType;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 
 /**
  * <p>

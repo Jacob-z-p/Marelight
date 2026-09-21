@@ -6,7 +6,7 @@ import com.jacobzp.entity.Voucher;
 import com.jacobzp.service.IVoucherService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * <p>

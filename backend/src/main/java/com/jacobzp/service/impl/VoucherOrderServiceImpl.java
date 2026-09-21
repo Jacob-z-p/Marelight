@@ -3,7 +3,7 @@ package com.jacobzp.service.impl;
 import com.jacobzp.entity.VoucherOrder;
 import com.jacobzp.mapper.VoucherOrderMapper;
 import com.jacobzp.service.IVoucherOrderService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,6 +1,6 @@
 package com.jacobzp.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.jacobzp.entity.User;
 
 /**

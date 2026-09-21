@@ -9,7 +9,7 @@ import com.jacobzp.service.IShopService;
 import com.jacobzp.utils.SystemConstants;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * <p>

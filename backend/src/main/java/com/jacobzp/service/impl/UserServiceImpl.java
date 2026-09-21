@@ -1,6 +1,6 @@
 package com.jacobzp.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jacobzp.entity.User;
 import com.jacobzp.mapper.UserMapper;
 import com.jacobzp.service.IUserService;
