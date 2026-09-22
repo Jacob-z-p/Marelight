@@ -5,8 +5,6 @@ import com.jacobzp.dto.LoginFormDTO;
 import com.jacobzp.dto.Result;
 import com.jacobzp.entity.User;
 
-import jakarta.servlet.http.HttpSession;
-
 /**
  * <p>
  *  服务类
@@ -17,7 +15,7 @@ import jakarta.servlet.http.HttpSession;
  */
 public interface IUserService extends IService<User> {
 
-    Result sendCode(String phone, HttpSession session);
+    Result sendCode(String phone);
 
-    Result login(LoginFormDTO loginForm, HttpSession session);
+    Result login(LoginFormDTO loginForm);
 }
