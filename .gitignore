@@ -23,3 +23,7 @@ desktop.ini
 # Env
 .env
 .env.*
+
+# Local notes and course materials
+dailyDigest/
+materials/

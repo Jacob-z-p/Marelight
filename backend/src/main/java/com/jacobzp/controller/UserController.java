@@ -3,9 +3,11 @@ package com.jacobzp.controller;
 
 import com.jacobzp.dto.LoginFormDTO;
 import com.jacobzp.dto.Result;
+import com.jacobzp.dto.UserDTO;
 import com.jacobzp.entity.UserInfo;
 import com.jacobzp.service.IUserInfoService;
 import com.jacobzp.service.IUserService;
+import com.jacobzp.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +38,7 @@ public class UserController {
      */
     @PostMapping("code")
     public Result sendCode(@RequestParam("phone") String phone, HttpSession session) {
-        // TODO 发送短信验证码并保存验证码
-        return Result.fail("功能未完成");
+        return userService.sendCode(phone, session);
     }
 
     /**
@@ -46,8 +47,7 @@ public class UserController {
      */
     @PostMapping("/login")
     public Result login(@RequestBody LoginFormDTO loginForm, HttpSession session){
-        // TODO 实现登录功能
-        return Result.fail("功能未完成");
+        return userService.login(loginForm, session);
     }
 
     /**
@@ -55,15 +55,21 @@ public class UserController {
      * @return 无
      */
     @PostMapping("/logout")
-    public Result logout(){
-        // TODO 实现登出功能
-        return Result.fail("功能未完成");
+    public Result logout(HttpSession session){
+        // 1.从session中删除用户信息
+        session.removeAttribute("user");
+        // 2.从线程中删除用户信息 -- 其实在拦截器中已经有关于线程清理的操作了,但是多删除一次也没有问题
+        UserHolder.removeUser();
+        // 3.返回成功结果
+        return Result.ok();
     }
 
     @GetMapping("/me")
     public Result me(){
-        // TODO 获取当前登录的用户并返回
-        return Result.fail("功能未完成");
+        // 1.从线程中获取用户信息
+        UserDTO user = UserHolder.getUser();
+        // 2.返回成功结果
+        return Result.ok(user);
     }
 
     @GetMapping("/info/{id}")
