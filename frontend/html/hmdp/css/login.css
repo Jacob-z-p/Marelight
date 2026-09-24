@@ -61,3 +61,135 @@ input[type="radio"]:checked + label::before {
 input[type="radio"] {
     opacity: 0;
 }
+
+.sms-login {
+    min-height: 100%;
+    background: #f7f5f5;
+}
+.sms-header {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    background: #fff;
+}
+.sms-back {
+    width: 48px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 20px;
+    color: #333;
+    line-height: 48px;
+}
+.sms-title {
+    flex: 1;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    color: #222;
+}
+.sms-body {
+    padding: 16px;
+}
+.sms-hint {
+    margin: 0 4px 14px;
+    color: #8c939d;
+    font-size: 13px;
+    line-height: 1.5;
+}
+.sms-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    padding: 20px 16px 16px;
+}
+.sms-login .el-input {
+    margin-bottom: 14px;
+}
+.sms-login .el-input__inner {
+    height: 44px;
+    line-height: 44px;
+    border-radius: 8px;
+}
+.sms-login .sms-code .el-input__inner {
+    border-radius: 8px 0 0 8px;
+}
+.sms-login .el-input__inner:focus {
+    border-color: #ff6633;
+}
+.sms-login .el-input-group__append {
+    background: #fff;
+    border-color: #dcdfe6;
+    border-radius: 0 8px 8px 0;
+    padding: 0;
+}
+.sms-login .sms-code .el-input__inner:focus {
+    border-color: #ff6633;
+}
+.sms-login .sms-send {
+    margin: 0;
+    height: 42px;
+    padding: 0 14px;
+    border: none;
+    background: transparent;
+    color: #ff6633;
+    font-size: 14px;
+}
+.sms-login .sms-send.is-disabled,
+.sms-login .sms-send.is-disabled:hover {
+    background: transparent;
+    border: none;
+    color: #c0c4cc;
+}
+.sms-agree {
+    display: flex;
+    align-items: flex-start;
+    margin: 2px 0 16px;
+    white-space: normal;
+}
+.sms-login .sms-agree .el-checkbox__label {
+    color: #606266;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: normal;
+}
+.sms-login .sms-agree .el-checkbox__input {
+    margin-top: 2px;
+}
+.sms-login .el-checkbox__inner:hover {
+    border-color: #ff6633;
+}
+.sms-login .el-checkbox__input.is-focus .el-checkbox__inner {
+    border-color: #ff6633;
+}
+.sms-login .el-checkbox__input.is-checked .el-checkbox__inner {
+    background-color: #ff6633;
+    border-color: #ff6633;
+}
+.sms-login .sms-agree a {
+    color: #ff6633;
+    text-decoration: none;
+}
+.sms-submit {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 22px;
+    background: #ff6633;
+    color: #fff;
+    font-size: 16px;
+}
+.sms-login .sms-submit:hover,
+.sms-login .sms-submit:focus {
+    background: #ff7744;
+    color: #fff;
+    border: none;
+}
+.sms-switch {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 14px;
+}
+.sms-switch a {
+    color: #ff6633;
+    text-decoration: none;
+}
