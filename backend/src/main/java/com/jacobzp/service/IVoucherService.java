@@ -9,12 +9,15 @@ import com.baomidou.mybatisplus.spring.service.IService;
  *  服务类
  * </p>
  *
- * @author 虎哥
- * @since 2021-12-22
+ * @author 虎哥、jacobzp
+ * @since 2021-12-22 ~ 2026-10-01
  */
 public interface IVoucherService extends IService<Voucher> {
 
     Result queryVoucherOfShop(Long shopId);
 
+    /**
+     * 添加秒杀券
+     */
     void addSeckillVoucher(Voucher voucher);
 }

@@ -1,59 +1,164 @@
+:root {
+    --bg: #f4f2ef;
+    --surface: #ffffff;
+    --text: #1c1917;
+    --muted: #78716c;
+    --accent: #e85d04;
+    --accent-soft: #fff1e6;
+    --line: rgba(28, 25, 23, 0.08);
+    --shadow: 0 8px 24px rgba(28, 25, 23, 0.06);
+    --radius: 12px;
+}
+
 html {
-    font-size: 12px;
-    width: 100%;
-}
-body{
-    margin: 0;
-}
-html,body,#app{
+    font-size: 16px;
     height: 100%;
+}
+body {
+    margin: 0;
+    height: 100%;
+    background: #e7e5e4;
+    color: var(--text);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+html, body, #app {
+    height: 100%;
+}
+#app {
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(28, 25, 23, 0.08);
+}
+#app.app-scroll {
+    overflow-y: auto;
+}
+
+.header {
+    flex-shrink: 0;
+    width: 100%;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    line-height: normal;
+    padding: 0;
+    box-sizing: border-box;
+}
+.header-back-btn,
+.header-search,
+.header-share {
+    width: 48px;
+    flex-shrink: 0;
+    text-align: center;
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 52px;
+}
+.header-title {
+    flex: 1;
+    width: auto;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: inherit;
+    line-height: 52px;
+}
+.top-bar {
+    display: none;
 }
 
 .el-tabs__item {
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--muted);
+}
+.el-tabs__item.is-active {
+    color: var(--text);
 }
 .el-tabs__active-bar {
-    height: 4px;
-    background-image: linear-gradient(to right, #F63, #f5b9a2);
+    height: 3px;
+    border-radius: 3px;
+    background: var(--accent);
+    background-image: none;
 }
+.el-input__inner {
+    color: var(--text);
+}
+.el-input__inner:focus {
+    border-color: var(--accent);
+}
+.el-button--primary,
+.el-button--primary:focus,
+.el-button--primary:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+.el-rate__icon {
+    margin-right: 2px;
+}
+.el-rate .el-rate__icon.el-icon-star-on,
+.el-rate__decimal {
+    color: var(--accent);
+}
+
 .foot {
+    flex-shrink: 0;
     width: 100%;
-    height: 8%;
+    height: calc(56px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    margin-top: auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 -1px 2px 1px rgba(0, 0, 0, 0.1);
-    position: absolute;
+    background: var(--surface);
+    box-shadow: 0 -1px 0 var(--line);
+    position: sticky;
     bottom: 0;
+    z-index: 30;
+    box-sizing: border-box;
 }
 .foot .add-btn {
-    width: 38px;
-    height: 38px;
-    box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.1);
-    border-radius: 18px;
+    width: 44px;
+    height: 44px;
+    box-shadow: var(--shadow);
+    border-radius: 22px;
+    object-fit: cover;
 }
-.foot-box{
+.foot-box {
     width: 20%;
-    color: #82848a;
+    color: var(--muted);
     text-align: center;
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 .foot-view {
-    font-size: 26px;
+    font-size: 22px;
+    line-height: 1;
 }
-.foot-text{
-    font-size: 8px;
-    margin-top: -4px;
+.foot-text {
+    font-size: 11px;
+    margin-top: 2px;
+    line-height: 1.2;
 }
-.foot-text, .foot-view{
+.foot-text, .foot-view {
     text-align: center;
 }
-.active{
-    color: #ff6633;
+.active {
+    color: var(--accent);
 }
-
-/*element-ui的评价星星间隙*/
-.el-rate__icon {
-    margin-right: 0;
-}
-

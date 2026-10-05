@@ -1,20 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-  <title>黑马点评</title>
-  <link href="./css/login.css" rel="stylesheet">
-  <!-- 引入样式 -->
+  <meta name="application-name" content="Marelight">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Marelight</title>
   <link rel="stylesheet" href="./css/element.css">
+  <link href="./css/main.css?v=2" rel="stylesheet">
+  <link href="./css/login.css?v=2" rel="stylesheet">
 
   <style type="text/css">
       .el-radio__input.is-checked .el-radio__inner {
-          border-color: #F63;
-          background: #F63;
+          border-color: #e85d04;
+          background: #e85d04;
       }
       .el-input__inner:focus {
-          border: 1px solid #F63;
+          border: 1px solid #e85d04;
       }
   </style>
 </head>
@@ -33,8 +35,8 @@
         <el-input placeholder="请输入密码" v-model="form.password">
         </el-input>
         <div style="text-align: center; color: #8c939d;margin: 5px 0"><a href="javascript:void(0)">忘记密码</a></div>
-        <el-button @click="login" style="width: 100%; background-color:#f63; color: #fff;">登录</el-button>
-        <div style="text-align: right; color:#333333; margin: 5px 0"><a href="/login.html">验证码登录</a></div>
+        <el-button @click="login" style="width: 100%; background-color:#e85d04; border-color:#e85d04; color: #fff;">登录</el-button>
+        <div style="text-align: right; color:#333333; margin: 5px 0"><a href="/login.html?v=2">验证码登录</a></div>
       </div>
       <div class="login-radio">
         <div>
@@ -43,7 +45,7 @@
         </div>
         <div>我已阅读并同意
           <a href="javascript:void(0)">
-          《黑马点评用户服务协议》</a>、
+          《Marelight 用户服务协议》</a>、
           <a href="javascript:void(0)">《隐私政策》</a>
           等，接受免除或者限制责任、诉讼管辖约定等粗体标示条款
         </div>

@@ -35,8 +35,16 @@ public class VoucherServiceImpl extends ServiceImpl<VoucherMapper, Voucher> impl
         return Result.ok(vouchers);
     }
 
+    /**
+     * 添加秒杀券:
+     * 1.首先添加到普通券中
+     * 2.然后添加到秒杀券库存中
+     *
+     * 疑问:
+     * 1.不用setCreateTime和setUpdateTime是不是因为mybatis-plus会自动添加?
+     */
     @Override
-    @Transactional
+    @Transactional // 因为要对多个数据库处理，所以加上事务管理
     public void addSeckillVoucher(Voucher voucher) {
         // 保存优惠券
         save(voucher);

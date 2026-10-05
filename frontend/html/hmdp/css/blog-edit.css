@@ -1,27 +1,43 @@
 .header{
-    padding: 15px;
-    line-height: 20px;
+    flex-shrink: 0;
+    height: 52px;
+    padding: 0 16px;
+    line-height: 52px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     text-align: center;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    box-sizing: border-box;
 }
 .header-cancel-btn{
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 500;
+    min-width: 48px;
+    color: var(--text);
 }
 .header-commit-btn{
     color: white;
-    background-color: #F63;
-    padding: 0 12px;
-    border-radius: 15px;
+    background-color: var(--accent);
+    padding: 0 14px;
+    height: 32px;
+    line-height: 32px;
+    border-radius: 16px;
+    font-size: 14px;
 }
 .header-title i {
     font-size: 14px;
+    margin-left: 4px;
+    color: var(--muted);
 }
 .header-title {
     text-align: center;
-    font-size: 18px;
-    font-family: Hiragino Sans GB,Arial,Helvetica,"\5B8B\4F53",sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: inherit;
+    line-height: 52px;
+    color: var(--text);
 }
 .upload-box {
     padding: 15px;
@@ -34,10 +50,10 @@
     line-height: 40px;
     text-align: center;
     align-items: center;
-    border: 1px dashed #3a8ee6;
-    border-radius: 5px;
-    font-size: 30px;
-    color: #82848a;
+    border: 1px dashed #d6d3d1;
+    border-radius: 12px;
+    font-size: 28px;
+    color: var(--muted);
     margin-right: 10px;
 }
 .upload-btn i {
@@ -122,18 +138,27 @@ textarea::placeholder {
     background: rgba(0,0,0,0.3);
 }
 .shop-dialog {
-    position: absolute;
+    position: fixed;
     z-index: 999;
+    left: 50%;
     bottom: 0;
-    height: 500px;
-    width: 100%;
+    transform: translateX(-50%);
+    height: 70%;
+    max-height: 520px;
+    width: min(100%, 480px);
     background-color: #fff;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    flex-direction: column;
 }
 .search-bar {
     display: flex;
-    padding: 15px;
-    line-height: 30px;
+    flex-shrink: 0;
+    padding: 12px 16px;
+    line-height: 36px;
     justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 .city-select {
     font-weight: bold;
@@ -160,9 +185,10 @@ input:focus,textarea:focus {
     outline: none;
 }
 .shop-list {
-    padding: 15px;
-    overflow-y: scroll;
-    height: 100%;
+    flex: 1;
+    min-height: 0;
+    padding: 0 16px 16px;
+    overflow-y: auto;
 }
 .shop-item {
     border-bottom: 1px solid #eae8e8;

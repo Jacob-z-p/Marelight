@@ -13,8 +13,8 @@ import jakarta.annotation.Resource;
  *  前端控制器
  * </p>
  *
- * @author 虎哥
- * @since 2021-12-22
+ * @author 虎哥、jacobzp
+ * @since 2021-12-22 ~ 2026-10-01
  */
 @RestController
 @RequestMapping("/voucher")
@@ -38,6 +38,8 @@ public class VoucherController {
      * 新增秒杀券
      * @param voucher 优惠券信息，包含秒杀信息
      * @return 优惠券id
+     *
+     * TODO 可以添加管理端用于添加秒杀券
      */
     @PostMapping("seckill")
     public Result addSeckillVoucher(@RequestBody Voucher voucher) {

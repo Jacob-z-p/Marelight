@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-  <title>黑马点评</title>
+  <meta name="application-name" content="Marelight">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Marelight</title>
   <!-- 引入样式 -->
   <link rel="stylesheet" href="./css/element.css">
 
-  <link href="./css/shop-list.css" rel="stylesheet">
-  <link href="./css/main.css" rel="stylesheet">
+  <link href="./css/shop-list.css?v=2" rel="stylesheet">
+  <link href="./css/main.css?v=2" rel="stylesheet">
 
   <style type="text/css">
 
@@ -54,7 +56,7 @@
         <div class="shop-rate shop-item" >
           <el-rate
               disabled v-model="s.score/10"
-              text-color="#F63"
+              text-color="#e85d04"
               show-score
           ></el-rate>
           <span>{{s.comments}}条</span>

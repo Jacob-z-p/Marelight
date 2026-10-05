@@ -10,7 +10,8 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 全局ID生成器
+ * 全局ID生成器：
+ *    redis在这里的作用就是: 通过自增的方式生成序列号
  */
 @Component
 public class RedisIdWorker {

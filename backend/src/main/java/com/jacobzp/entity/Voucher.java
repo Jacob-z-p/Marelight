@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
  * 
  * </p>
  *
- * @author 虎哥
- * @since 2021-12-22
+ * @author 虎哥、jacobzp
+ * @since 2021-12-22 ~ 2026-10-01
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -69,7 +69,7 @@ public class Voucher implements Serializable {
     private Integer type;
 
     /**
-     * 优惠券类型
+     * 优惠券状态
      */
     private Integer status;
     /**

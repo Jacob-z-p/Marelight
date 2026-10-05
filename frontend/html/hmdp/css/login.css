@@ -1,43 +1,81 @@
 .login-container{
     height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
 .header{
     width: 100%;
-    height: 7%;
+    height: 52px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 2px solid #ff6633;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
 }
 .header-back-btn{
-    width: 10%;
-    color: #ff6633;
-    font-size: 22px;
+    width: 48px;
+    color: var(--text);
+    font-size: 20px;
+    text-align: center;
 }
 .header-title {
-    width: 90%;
+    width: auto;
+    flex: 1;
     text-align: center;
-    font-size: 18px;
-    font-family: Hiragino Sans GB,Arial,Helvetica,"\5B8B\4F53",sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text);
 }
 
 .content{
-    height: 93%;
-    background-color: #f7f5f5;
-    padding: 10px;
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    background-color: var(--bg);
+    padding: 16px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 28px;
+    overflow: auto;
 }
 
 .login-form {
-    height: 85%;
+    height: auto;
+}
+.login-form .el-input {
+    margin-bottom: 12px;
+}
+.login-form .el-input__inner {
+    height: 44px;
+    line-height: 44px;
+    border-radius: 8px;
+}
+.login-form .el-button {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 22px;
+    font-size: 16px;
+}
+.login-form a,
+.login-radio a {
+    color: var(--accent);
+    text-decoration: none;
 }
 .login-radio {
-    height: 15%;
+    height: auto;
     width: 100%;
     display: flex;
-    align-items: start;
+    align-items: flex-start;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
 }
 input[type="radio"] + label::before {
     content: "\a0"; /*不换行空格*/
@@ -48,13 +86,13 @@ input[type="radio"] + label::before {
     height: 0.7em;
     margin-right: .4em;
     border-radius: 50%;
-    border: 2px solid #F63;
+    border: 2px solid var(--accent);
     text-indent: .15em;
     line-height: 1; 
     padding: .2em;
 }
 input[type="radio"]:checked + label::before {
-    background-color: #F63;
+    background-color: var(--accent);
     background-clip: content-box;
     padding: .2em;
 }
@@ -64,7 +102,7 @@ input[type="radio"] {
 
 .sms-login {
     min-height: 100%;
-    background: #f7f5f5;
+    background: var(--bg);
 }
 .sms-header {
     display: flex;
@@ -92,14 +130,14 @@ input[type="radio"] {
 }
 .sms-hint {
     margin: 0 4px 14px;
-    color: #8c939d;
+    color: var(--muted);
     font-size: 13px;
     line-height: 1.5;
 }
 .sms-card {
     background: #fff;
     border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow);
     padding: 20px 16px 16px;
 }
 .sms-login .el-input {
@@ -114,7 +152,7 @@ input[type="radio"] {
     border-radius: 8px 0 0 8px;
 }
 .sms-login .el-input__inner:focus {
-    border-color: #ff6633;
+    border-color: #e85d04;
 }
 .sms-login .el-input-group__append {
     background: #fff;
@@ -123,7 +161,7 @@ input[type="radio"] {
     padding: 0;
 }
 .sms-login .sms-code .el-input__inner:focus {
-    border-color: #ff6633;
+    border-color: #e85d04;
 }
 .sms-login .sms-send {
     margin: 0;
@@ -131,7 +169,7 @@ input[type="radio"] {
     padding: 0 14px;
     border: none;
     background: transparent;
-    color: #ff6633;
+    color: #e85d04;
     font-size: 14px;
 }
 .sms-login .sms-send.is-disabled,
@@ -156,17 +194,17 @@ input[type="radio"] {
     margin-top: 2px;
 }
 .sms-login .el-checkbox__inner:hover {
-    border-color: #ff6633;
+    border-color: #e85d04;
 }
 .sms-login .el-checkbox__input.is-focus .el-checkbox__inner {
-    border-color: #ff6633;
+    border-color: #e85d04;
 }
 .sms-login .el-checkbox__input.is-checked .el-checkbox__inner {
-    background-color: #ff6633;
-    border-color: #ff6633;
+    background-color: #e85d04;
+    border-color: #e85d04;
 }
 .sms-login .sms-agree a {
-    color: #ff6633;
+    color: #e85d04;
     text-decoration: none;
 }
 .sms-submit {
@@ -174,13 +212,13 @@ input[type="radio"] {
     height: 44px;
     border: none;
     border-radius: 22px;
-    background: #ff6633;
+    background: #e85d04;
     color: #fff;
     font-size: 16px;
 }
 .sms-login .sms-submit:hover,
 .sms-login .sms-submit:focus {
-    background: #ff7744;
+    background: #c2410c;
     color: #fff;
     border: none;
 }
@@ -190,6 +228,6 @@ input[type="radio"] {
     font-size: 14px;
 }
 .sms-switch a {
-    color: #ff6633;
+    color: #e85d04;
     text-decoration: none;
 }

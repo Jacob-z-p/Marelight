@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-  <title>黑马点评</title>
+  <meta name="application-name" content="Marelight">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Marelight</title>
   <!-- 引入样式 -->
   <link rel="stylesheet" href="./css/element.css">
 
-  <link href="./css/shop-detail.css" rel="stylesheet">
-  <link href="./css/main.css" rel="stylesheet">
+  <link href="./css/shop-detail.css?v=2" rel="stylesheet">
+  <link href="./css/main.css?v=2" rel="stylesheet">
 
   <style type="text/css">
 
   </style>
 </head>
 <body>
-<div id="app">
+<div id="app" class="app-scroll">
   <div class="header">
     <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
     <div class="header-title"></div>
@@ -27,7 +29,7 @@
     <div class="shop-rate">
       <el-rate
           disabled v-model="shop.score/10"
-          text-color="#F63"
+          text-color="#e85d04"
           show-score
       ></el-rate>
       <span>{{shop.comments}}条</span>
@@ -135,7 +137,7 @@
   </div>
   <div class="shop-divider"></div>
   <div class="copyright">
-    copyright ©2021 hmdp.com
+    Marelight
   </div>
 </div>
 <script src="./js/vue.js"></script>
@@ -202,7 +204,7 @@
           this.$message.error("请先登录")
           // 未登录，跳转
           setTimeout(() => {
-            location.href = "/login.html"
+            location.href = "/login.html?v=2"
           }, 200);
           return;
         }

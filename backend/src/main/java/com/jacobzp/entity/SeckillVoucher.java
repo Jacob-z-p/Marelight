@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
  * @since 2022-01-04
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = false) // 可加可不加, 但是mybatis-plus经常加
+@Accessors(chain = true) // 作用: setter不再返回void, 而是返回this -- 可用于链式编程(比如可以连续赋值)
 @TableName("tb_seckill_voucher")
 public class SeckillVoucher implements Serializable {
 

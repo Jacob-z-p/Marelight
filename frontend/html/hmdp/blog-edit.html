@@ -1,20 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-  <title>黑马点评</title>
+  <meta name="application-name" content="Marelight">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Marelight</title>
   <!-- 引入样式 -->
   <link rel="stylesheet" href="./css/element.css">
-  <link href="./css/main.css" rel="stylesheet">
-  <link href="./css/blog-edit.css" rel="stylesheet">
+  <link href="./css/main.css?v=2" rel="stylesheet">
+  <link href="./css/blog-edit.css?v=2" rel="stylesheet">
 
   <style type="text/css">
 
   </style>
 </head>
 <body>
-<div id="app">
+<div id="app" class="app-scroll">
   <div class="header">
     <div class="header-cancel-btn" @click="goBack">取消</div>
     <div class="header-title">&nbsp;&nbsp;发笔记<i class="el-icon-info"></i></div>
@@ -137,14 +139,14 @@
         // 获取token
         let token = sessionStorage.getItem("token");
         if (!token) {
-          location.href = "login.html"
+          location.href = "login.html?v=2"
         }
         // 查询用户信息
         axios.get("/user/me")
           .then()
           .catch(err => {
             this.$message.error(err);
-            setTimeout(() => location.href = "login.html", 200)
+            setTimeout(() => location.href = "login.html?v=2", 200)
           })
       },
       goBack() {
