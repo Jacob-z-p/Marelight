@@ -7,10 +7,15 @@ import com.jacobzp.mapper.VoucherOrderMapper;
 import com.jacobzp.service.ISeckillVoucherService;
 import com.jacobzp.service.IVoucherOrderService;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
+import com.jacobzp.utils.RedisConstants;
 import com.jacobzp.utils.RedisIdWorker;
+import com.jacobzp.utils.SimpleRedisLock;
 import com.jacobzp.utils.UserHolder;
 import jakarta.annotation.Resource;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.aop.framework.AopContext;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +36,10 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
     private ISeckillVoucherService seckillVoucherService;
     @Resource
     private RedisIdWorker redisIdWorker;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private RedissonClient redissonClient;
 
     /**
      * 购买优惠券-实现1:
@@ -183,6 +192,92 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         synchronized (userId.toString().intern()) {
             IVoucherOrderService proxy = (IVoucherOrderService) AopContext.currentProxy();
             return proxy.createVoucher(voucherId);
+        }
+    }
+
+    /**
+     * 购买优惠券-实现4
+     *  一人一单改用 Redis 分布式锁，多台实例抢的是同一把锁
+     */
+    @Override
+    public Result seckillVoucher4(Long voucherId) {
+
+        // 1.根据优惠券id查询优惠券信息 -- seckill_voucher的id与voucher的id是共享的
+        SeckillVoucher voucher = seckillVoucherService.getById(voucherId);
+
+        // 2.判断秒杀是否开始和结束
+        if (voucher.getBeginTime().isAfter(LocalDateTime.now())) {
+            // 抢购时间还没开始
+            return Result.fail("秒杀尚未开始");
+        }
+        if (voucher.getEndTime().isBefore(LocalDateTime.now())) {
+            // 抢购时间结束
+            return Result.fail("秒杀已经结束");
+        }
+
+        // 3.判断库存是否充足
+        Integer stock = voucher.getStock();
+        if (stock < 1) {
+            // 库存不足
+            return Result.fail("库存不足");
+        }
+
+        Long userId = UserHolder.getUser().getId();
+        // 锁名只带用户：同一个用户才互斥，不同用户可以同时下单。键实际是 lock:order:{userId}
+        SimpleRedisLock lock = new SimpleRedisLock("order:" + userId, stringRedisTemplate);
+        boolean locked = lock.tryLock(RedisConstants.LOCK_ORDER_TTL);
+        if (!locked) {
+            return Result.fail("不允许重复下单");
+        }
+        try {
+            // 走代理，等 createVoucher 的事务提交后再放锁
+            IVoucherOrderService proxy = (IVoucherOrderService) AopContext.currentProxy();
+            return proxy.createVoucher(voucherId);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 购买优惠券-实现5
+     *  一人一单改用 Redisson。没抢到直接返回，抢到后看门狗会给锁续期
+     */
+    @Override
+    public Result seckillVoucher5(Long voucherId) {
+
+        // 1.根据优惠券id查询优惠券信息 -- seckill_voucher的id与voucher的id是共享的
+        SeckillVoucher voucher = seckillVoucherService.getById(voucherId);
+
+        // 2.判断秒杀是否开始和结束
+        if (voucher.getBeginTime().isAfter(LocalDateTime.now())) {
+            // 抢购时间还没开始
+            return Result.fail("秒杀尚未开始");
+        }
+        if (voucher.getEndTime().isBefore(LocalDateTime.now())) {
+            // 抢购时间结束
+            return Result.fail("秒杀已经结束");
+        }
+
+        // 3.判断库存是否充足
+        Integer stock = voucher.getStock();
+        if (stock < 1) {
+            // 库存不足
+            return Result.fail("库存不足");
+        }
+
+        Long userId = UserHolder.getUser().getId();
+        // 同一个用户才互斥，不同用户可以同时下单
+        RLock lock = redissonClient.getLock("lock:order:" + userId);
+        boolean locked = lock.tryLock();
+        if (!locked) {
+            return Result.fail("不允许重复下单");
+        }
+        try {
+            // 走代理，等 createVoucher 的事务提交后再放锁
+            IVoucherOrderService proxy = (IVoucherOrderService) AopContext.currentProxy();
+            return proxy.createVoucher(voucherId);
+        } finally {
+            lock.unlock();
         }
     }
 

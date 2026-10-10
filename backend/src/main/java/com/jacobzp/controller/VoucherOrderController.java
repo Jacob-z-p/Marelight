@@ -33,7 +33,13 @@ public class VoucherOrderController {
 //        return voucherOrderService.seckillVoucher2(voucherId);
 
 
-        // 版本3: 解决一人多单问题
-        return voucherOrderService.seckillVoucher3(voucherId);
+        // 版本3: 单机 synchronized 解决一人一单
+//        return voucherOrderService.seckillVoucher3(voucherId);
+
+        // 版本4: 自己实现的 Redis 分布式锁解决一人一单
+//        return voucherOrderService.seckillVoucher4(voucherId);
+
+        // 版本5: Redisson 分布式锁解决一人一单
+        return voucherOrderService.seckillVoucher5(voucherId);
     }
 }

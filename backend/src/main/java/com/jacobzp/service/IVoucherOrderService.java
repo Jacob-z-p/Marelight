@@ -34,6 +34,18 @@ public interface IVoucherOrderService extends IService<VoucherOrder> {
     Result seckillVoucher3(Long voucherId);
 
     /**
+     * 购买优惠券-实现4
+     *  用分布式锁实现一人一单，多台实例下仍然生效
+     */
+    Result seckillVoucher4(Long voucherId);
+
+    /**
+     * 购买优惠券-实现5
+     *  用 Redisson 分布式锁实现一人一单
+     */
+    Result seckillVoucher5(Long voucherId);
+
+    /**
      * 创建订单
      */
     Result createVoucher(Long voucherId);

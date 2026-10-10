@@ -8,10 +8,10 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableAspectJAutoProxy(exposeProxy = true) // 暴露代理对象
 @MapperScan("com.jacobzp.mapper")
 @SpringBootApplication
-public class HmDianPingApplication {
+public class MarelightApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(HmDianPingApplication.class, args);
+        SpringApplication.run(MarelightApplication.class, args);
     }
 
 }

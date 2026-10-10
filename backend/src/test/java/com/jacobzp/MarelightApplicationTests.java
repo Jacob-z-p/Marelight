@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 
 
 @SpringBootTest
-class HmDianPingApplicationTests {
+class MarelightApplicationTests {
 
     // 常量:一个线程池中线程的数量
     private static final int threadPoolNumber = 500;
