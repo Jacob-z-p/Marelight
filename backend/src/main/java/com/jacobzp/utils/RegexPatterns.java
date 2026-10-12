@@ -5,10 +5,11 @@ package com.jacobzp.utils;
  */
 public abstract class RegexPatterns {
     /**
-     * 手机号正则
-     *  public static final: 静态常量
+     * 中国大陆手机号：共 11 位，以 1 开头，第二位为 3–9，其余为数字。
+     * 只校验格式，不按运营商号段列举。号段会持续新增（如 192、191、195、172），
+     * 白名单会漏掉新号。物联网号多为 13 位，不在本规则内。
      */
-    public static final String PHONE_REGEX = "^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\\d{8}$";
+    public static final String PHONE_REGEX = "^1[3-9]\\d{9}$";
     /**
      * 邮箱正则
      */

@@ -44,6 +44,7 @@ public class UserController {
      */
     @PostMapping("code")
     public Result sendCode(@RequestParam("phone") String phone) {
+        // 调用service层接口实现“发送并保存短信验证码”
         return userService.sendCode(phone);
     }
 
