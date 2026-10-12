@@ -26,4 +26,6 @@ desktop.ini
 
 # Local notes and course materials
 dailyDigest/
-materials/
+materials/*
+!materials/api/
+!materials/api/**

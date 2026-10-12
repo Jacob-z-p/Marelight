@@ -1,0 +1,932 @@
+[
+  {
+    "index": 0,
+    "name": "用户",
+    "desc": "与当前后端 Controller 一致。直连 Spring Boot（http://127.0.0.1:8081）时使用本文档路径；经 Nginx（http://127.0.0.1:8080）访问时在路径前加 /api，例如 /api/user/login。统一响应为 Result：success、errorMsg、data、total。Jackson 忽略 null，成功时通常不返回 errorMsg 和 total。需要登录的接口在请求头 authorization 中携带登录返回的 token，缺失或失效时返回 HTTP 401，响应体为空。未捕获的运行时异常返回 HTTP 200，body 为 success=false、errorMsg=服务器异常。缺少必填参数时返回 HTTP 400。",
+    "add_time": 1790812800,
+    "up_time": 1790812800,
+    "list": [
+      {
+        "query_path": {
+          "path": "/user/code",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "method": "POST",
+        "title": "发送手机验证码",
+        "path": "/user/code",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [],
+        "req_query": [
+          {
+            "required": "1",
+            "name": "phone",
+            "desc": "手机号，需匹配 1 开头的 11 位号码",
+            "example": "13800138000"
+          }
+        ],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"成功时无业务数据\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "校验手机号后生成 6 位数字验证码，写入 Redis（键 login:code:{phone}），2 分钟过期。短信发送由日志模拟，接口本身不返回验证码。无需登录。失败：手机号格式错误。"
+      },
+      {
+        "query_path": {
+          "path": "/user/login",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": true,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 1,
+        "tag": [],
+        "method": "POST",
+        "title": "登录",
+        "path": "/user/login",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "Content-Type",
+            "value": "application/json",
+            "desc": "请求体为 JSON"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"登录令牌 token，后续请求放入请求头 authorization\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"phone\":{\"type\":\"string\",\"description\":\"手机号\"},\"code\":{\"type\":\"string\",\"description\":\"6 位数字验证码\"},\"password\":{\"type\":\"string\",\"description\":\"密码。字段存在，当前登录逻辑不使用\"}},\"required\":[\"phone\",\"code\"]}",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "校验手机号和 Redis 中的验证码。用户不存在时按手机号自动注册，昵称前缀为 user_。成功后把用户 id、昵称、头像写入 Redis（键 login:token:{token}，有效期 36000 秒），并删除验证码。无需登录。password 字段当前不参与校验。失败：手机号格式错误、验证码错误。"
+      },
+      {
+        "query_path": {
+          "path": "/user/logout",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 2,
+        "tag": [],
+        "method": "POST",
+        "title": "登出",
+        "path": "/user/logout",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "authorization",
+            "value": "",
+            "example": "e7c8f0a1b2c34d5e6f708192a3b4c5d6",
+            "desc": "登录接口 data 中的 token。请求头名称为 authorization"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"成功时无业务数据\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "需要登录。删除 Redis 中的 login:token:{token}，并清理当前线程中的用户。请求头里的 token 即 authorization。"
+      },
+      {
+        "query_path": {
+          "path": "/user/me",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 3,
+        "tag": [],
+        "method": "GET",
+        "title": "当前登录用户",
+        "path": "/user/me",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "authorization",
+            "value": "",
+            "example": "e7c8f0a1b2c34d5e6f708192a3b4c5d6",
+            "desc": "登录接口 data 中的 token。请求头名称为 authorization"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"用户主键\"},\"nickName\":{\"type\":\"string\",\"description\":\"昵称\"},\"icon\":{\"type\":\"string\",\"description\":\"头像地址\"}},\"required\":[\"id\"],\"description\":\"当前登录用户\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "需要登录。从登录态返回 id、nickName、icon。"
+      },
+      {
+        "query_path": {
+          "path": "/user/info/{id}",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 4,
+        "tag": [],
+        "method": "GET",
+        "title": "查询用户详情",
+        "path": "/user/info/{id}",
+        "req_params": [
+          {
+            "name": "id",
+            "desc": "用户 id",
+            "example": "1"
+          }
+        ],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "authorization",
+            "value": "",
+            "example": "e7c8f0a1b2c34d5e6f708192a3b4c5d6",
+            "desc": "登录接口 data 中的 token。请求头名称为 authorization"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"object\",\"properties\":{\"userId\":{\"type\":\"integer\",\"description\":\"用户 id\"},\"city\":{\"type\":\"string\",\"description\":\"城市名称\"},\"introduce\":{\"type\":\"string\",\"description\":\"个人介绍，不超过 128 个字符\"},\"fans\":{\"type\":\"integer\",\"description\":\"粉丝数量\"},\"followee\":{\"type\":\"integer\",\"description\":\"关注的人的数量\"},\"gender\":{\"type\":\"boolean\",\"description\":\"性别。false 男，true 女\"},\"birthday\":{\"type\":\"string\",\"description\":\"生日，例如 2000-01-01\"},\"credits\":{\"type\":\"integer\",\"description\":\"积分\"},\"level\":{\"type\":\"boolean\",\"description\":\"会员级别。数据库为 0~9，0 表示未开通；接口按 Boolean 序列化\"}},\"description\":\"用户详情。createTime、updateTime 被置空后省略。无记录时不返回 data\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "需要登录。按用户 id 查询 tb_user_info。没有详情时 success=true 且不返回 data。返回前会去掉创建时间和更新时间。"
+      }
+    ]
+  },
+  {
+    "index": 1,
+    "name": "店铺",
+    "desc": "响应格式、登录态和访问前缀见「用户」分类说明。",
+    "add_time": 1790812800,
+    "up_time": 1790812800,
+    "list": [
+      {
+        "query_path": {
+          "path": "/shop/{id}",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "method": "GET",
+        "title": "根据 id 查询店铺",
+        "path": "/shop/{id}",
+        "req_params": [
+          {
+            "name": "id",
+            "desc": "商铺 id",
+            "example": "1"
+          }
+        ],
+        "req_body_form": [],
+        "req_headers": [],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键。新增时可不传，由数据库生成\"},\"name\":{\"type\":\"string\",\"description\":\"商铺名称\"},\"typeId\":{\"type\":\"integer\",\"description\":\"商铺类型 id\"},\"images\":{\"type\":\"string\",\"description\":\"图片地址，多张以英文逗号隔开\"},\"area\":{\"type\":\"string\",\"description\":\"商圈，例如陆家嘴\"},\"address\":{\"type\":\"string\",\"description\":\"地址\"},\"x\":{\"type\":\"number\",\"description\":\"经度\"},\"y\":{\"type\":\"number\",\"description\":\"纬度\"},\"avgPrice\":{\"type\":\"integer\",\"description\":\"均价，单位元，取整数\"},\"sold\":{\"type\":\"integer\",\"description\":\"销量\"},\"comments\":{\"type\":\"integer\",\"description\":\"评论数量\"},\"score\":{\"type\":\"integer\",\"description\":\"评分。1~5 分乘 10 保存，例如 37 表示 3.7\"},\"openHours\":{\"type\":\"string\",\"description\":\"营业时间，例如 10:00-22:00\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601，例如 2021-12-22T18:10:39\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601\"},\"distance\":{\"type\":\"number\",\"description\":\"距离。当前查询未计算，响应中省略\"}},\"required\":[\"id\",\"name\"],\"description\":\"店铺详情\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。先经缓存和互斥锁查询，缓存键 cache:shop:{id}，过期时间 30 分钟。店铺不存在时 success=false，errorMsg=店铺不存在。"
+      },
+      {
+        "query_path": {
+          "path": "/shop",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": true,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 1,
+        "tag": [],
+        "method": "POST",
+        "title": "新增店铺",
+        "path": "/shop",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "Content-Type",
+            "value": "application/json",
+            "desc": "请求体为 JSON"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"新建店铺的 id\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键。新增时可不传，由数据库生成\"},\"name\":{\"type\":\"string\",\"description\":\"商铺名称\"},\"typeId\":{\"type\":\"integer\",\"description\":\"商铺类型 id\"},\"images\":{\"type\":\"string\",\"description\":\"图片地址，多张以英文逗号隔开\"},\"area\":{\"type\":\"string\",\"description\":\"商圈，例如陆家嘴\"},\"address\":{\"type\":\"string\",\"description\":\"地址\"},\"x\":{\"type\":\"number\",\"description\":\"经度\"},\"y\":{\"type\":\"number\",\"description\":\"纬度\"},\"avgPrice\":{\"type\":\"integer\",\"description\":\"均价，单位元，取整数\"},\"sold\":{\"type\":\"integer\",\"description\":\"销量\"},\"comments\":{\"type\":\"integer\",\"description\":\"评论数量\"},\"score\":{\"type\":\"integer\",\"description\":\"评分。1~5 分乘 10 保存，例如 37 表示 3.7\"},\"openHours\":{\"type\":\"string\",\"description\":\"营业时间，例如 10:00-22:00\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601，例如 2021-12-22T18:10:39\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601\"},\"distance\":{\"type\":\"number\",\"description\":\"距离。当前查询未计算，响应中省略\"}},\"required\":[\"name\",\"typeId\",\"images\",\"address\",\"x\",\"y\"]}",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。写入 tb_shop 后返回新店铺 id。数据库非空字段：name、typeId、images、address、x、y、sold、comments、score。"
+      },
+      {
+        "query_path": {
+          "path": "/shop",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": true,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 2,
+        "tag": [],
+        "method": "PUT",
+        "title": "更新店铺",
+        "path": "/shop",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "Content-Type",
+            "value": "application/json",
+            "desc": "请求体为 JSON"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"成功时无业务数据\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键。新增时可不传，由数据库生成\"},\"name\":{\"type\":\"string\",\"description\":\"商铺名称\"},\"typeId\":{\"type\":\"integer\",\"description\":\"商铺类型 id\"},\"images\":{\"type\":\"string\",\"description\":\"图片地址，多张以英文逗号隔开\"},\"area\":{\"type\":\"string\",\"description\":\"商圈，例如陆家嘴\"},\"address\":{\"type\":\"string\",\"description\":\"地址\"},\"x\":{\"type\":\"number\",\"description\":\"经度\"},\"y\":{\"type\":\"number\",\"description\":\"纬度\"},\"avgPrice\":{\"type\":\"integer\",\"description\":\"均价，单位元，取整数\"},\"sold\":{\"type\":\"integer\",\"description\":\"销量\"},\"comments\":{\"type\":\"integer\",\"description\":\"评论数量\"},\"score\":{\"type\":\"integer\",\"description\":\"评分。1~5 分乘 10 保存，例如 37 表示 3.7\"},\"openHours\":{\"type\":\"string\",\"description\":\"营业时间，例如 10:00-22:00\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601，例如 2021-12-22T18:10:39\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601\"},\"distance\":{\"type\":\"number\",\"description\":\"距离。当前查询未计算，响应中省略\"}},\"required\":[\"id\"]}",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。id 为空时 success=false，errorMsg=店铺id不能为空。先更新数据库，再删除缓存 cache:shop:{id}。请求体中的空字段不会写入。"
+      },
+      {
+        "query_path": {
+          "path": "/shop/of/type",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 3,
+        "tag": [],
+        "method": "GET",
+        "title": "按类型分页查询店铺",
+        "path": "/shop/of/type",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [],
+        "req_query": [
+          {
+            "required": "1",
+            "name": "typeId",
+            "desc": "商铺类型 id",
+            "example": "1"
+          },
+          {
+            "required": "0",
+            "name": "current",
+            "desc": "页码，从 1 开始，默认 1",
+            "example": "1"
+          }
+        ],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"array\",\"description\":\"当前页店铺列表，每页 5 条\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键。新增时可不传，由数据库生成\"},\"name\":{\"type\":\"string\",\"description\":\"商铺名称\"},\"typeId\":{\"type\":\"integer\",\"description\":\"商铺类型 id\"},\"images\":{\"type\":\"string\",\"description\":\"图片地址，多张以英文逗号隔开\"},\"area\":{\"type\":\"string\",\"description\":\"商圈，例如陆家嘴\"},\"address\":{\"type\":\"string\",\"description\":\"地址\"},\"x\":{\"type\":\"number\",\"description\":\"经度\"},\"y\":{\"type\":\"number\",\"description\":\"纬度\"},\"avgPrice\":{\"type\":\"integer\",\"description\":\"均价，单位元，取整数\"},\"sold\":{\"type\":\"integer\",\"description\":\"销量\"},\"comments\":{\"type\":\"integer\",\"description\":\"评论数量\"},\"score\":{\"type\":\"integer\",\"description\":\"评分。1~5 分乘 10 保存，例如 37 表示 3.7\"},\"openHours\":{\"type\":\"string\",\"description\":\"营业时间，例如 10:00-22:00\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601，例如 2021-12-22T18:10:39\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601\"},\"distance\":{\"type\":\"number\",\"description\":\"距离。当前查询未计算，响应中省略\"}}}},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。按 type_id 等值查询，每页 5 条。只返回当前页记录，不是分页对象。"
+      },
+      {
+        "query_path": {
+          "path": "/shop/of/name",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 4,
+        "tag": [],
+        "method": "GET",
+        "title": "按名称分页查询店铺",
+        "path": "/shop/of/name",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [],
+        "req_query": [
+          {
+            "required": "0",
+            "name": "name",
+            "desc": "商铺名称关键字，可空",
+            "example": "茶餐厅"
+          },
+          {
+            "required": "0",
+            "name": "current",
+            "desc": "页码，从 1 开始，默认 1",
+            "example": "1"
+          }
+        ],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"array\",\"description\":\"当前页店铺列表，每页 10 条\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键。新增时可不传，由数据库生成\"},\"name\":{\"type\":\"string\",\"description\":\"商铺名称\"},\"typeId\":{\"type\":\"integer\",\"description\":\"商铺类型 id\"},\"images\":{\"type\":\"string\",\"description\":\"图片地址，多张以英文逗号隔开\"},\"area\":{\"type\":\"string\",\"description\":\"商圈，例如陆家嘴\"},\"address\":{\"type\":\"string\",\"description\":\"地址\"},\"x\":{\"type\":\"number\",\"description\":\"经度\"},\"y\":{\"type\":\"number\",\"description\":\"纬度\"},\"avgPrice\":{\"type\":\"integer\",\"description\":\"均价，单位元，取整数\"},\"sold\":{\"type\":\"integer\",\"description\":\"销量\"},\"comments\":{\"type\":\"integer\",\"description\":\"评论数量\"},\"score\":{\"type\":\"integer\",\"description\":\"评分。1~5 分乘 10 保存，例如 37 表示 3.7\"},\"openHours\":{\"type\":\"string\",\"description\":\"营业时间，例如 10:00-22:00\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601，例如 2021-12-22T18:10:39\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601\"},\"distance\":{\"type\":\"number\",\"description\":\"距离。当前查询未计算，响应中省略\"}}}},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。name 非空时按名称模糊查询，每页 10 条。只返回当前页记录。"
+      }
+    ]
+  },
+  {
+    "index": 2,
+    "name": "店铺类型",
+    "desc": "响应格式、登录态和访问前缀见「用户」分类说明。",
+    "add_time": 1790812800,
+    "up_time": 1790812800,
+    "list": [
+      {
+        "query_path": {
+          "path": "/shop-type/list",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "method": "GET",
+        "title": "查询店铺类型列表",
+        "path": "/shop-type/list",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"array\",\"description\":\"店铺类型列表\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"类型 id\"},\"name\":{\"type\":\"string\",\"description\":\"类型名称\"},\"icon\":{\"type\":\"string\",\"description\":\"图标地址\"},\"sort\":{\"type\":\"integer\",\"description\":\"排序，数值越小越靠前\"}},\"required\":[\"id\",\"name\"]}},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。按 sort 升序返回全部类型。createTime、updateTime 标注了 JsonIgnore，不会出现在响应中。"
+      }
+    ]
+  },
+  {
+    "index": 3,
+    "name": "探店笔记",
+    "desc": "响应格式、登录态和访问前缀见「用户」分类说明。",
+    "add_time": 1790812800,
+    "up_time": 1790812800,
+    "list": [
+      {
+        "query_path": {
+          "path": "/blog",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": true,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "method": "POST",
+        "title": "发布探店笔记",
+        "path": "/blog",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "authorization",
+            "value": "",
+            "example": "e7c8f0a1b2c34d5e6f708192a3b4c5d6",
+            "desc": "登录接口 data 中的 token。请求头名称为 authorization"
+          },
+          {
+            "required": "1",
+            "name": "Content-Type",
+            "value": "application/json",
+            "desc": "请求体为 JSON"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"新建笔记的 id\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键\"},\"shopId\":{\"type\":\"integer\",\"description\":\"商户 id\"},\"userId\":{\"type\":\"integer\",\"description\":\"作者用户 id。发布时由服务端按登录用户写入\"},\"icon\":{\"type\":\"string\",\"description\":\"作者头像。热门列表会填充，其他接口通常省略\"},\"name\":{\"type\":\"string\",\"description\":\"作者昵称。热门列表会填充，其他接口通常省略\"},\"isLike\":{\"type\":\"boolean\",\"description\":\"当前用户是否已点赞。当前接口未赋值，响应中省略\"},\"title\":{\"type\":\"string\",\"description\":\"标题\"},\"images\":{\"type\":\"string\",\"description\":\"探店照片，最多 9 张，多张以英文逗号隔开\"},\"content\":{\"type\":\"string\",\"description\":\"探店文字描述\"},\"liked\":{\"type\":\"integer\",\"description\":\"点赞数量\"},\"comments\":{\"type\":\"integer\",\"description\":\"评论数量\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601\"}},\"required\":[\"shopId\",\"title\"]}",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "需要登录。userId 由服务端从登录用户写入，请求体中的 userId 会被覆盖。成功返回笔记 id。"
+      },
+      {
+        "query_path": {
+          "path": "/blog/like/{id}",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 1,
+        "tag": [],
+        "method": "PUT",
+        "title": "点赞笔记",
+        "path": "/blog/like/{id}",
+        "req_params": [
+          {
+            "name": "id",
+            "desc": "笔记 id",
+            "example": "1"
+          }
+        ],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "authorization",
+            "value": "",
+            "example": "e7c8f0a1b2c34d5e6f708192a3b4c5d6",
+            "desc": "登录接口 data 中的 token。请求头名称为 authorization"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"成功时无业务数据\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "需要登录。执行 liked = liked + 1，没有取消点赞，也不校验是否重复点赞。"
+      },
+      {
+        "query_path": {
+          "path": "/blog/of/me",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 2,
+        "tag": [],
+        "method": "GET",
+        "title": "查询我的笔记",
+        "path": "/blog/of/me",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "authorization",
+            "value": "",
+            "example": "e7c8f0a1b2c34d5e6f708192a3b4c5d6",
+            "desc": "登录接口 data 中的 token。请求头名称为 authorization"
+          }
+        ],
+        "req_query": [
+          {
+            "required": "0",
+            "name": "current",
+            "desc": "页码，从 1 开始，默认 1",
+            "example": "1"
+          }
+        ],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"array\",\"description\":\"当前用户的笔记列表，每页 10 条\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键\"},\"shopId\":{\"type\":\"integer\",\"description\":\"商户 id\"},\"userId\":{\"type\":\"integer\",\"description\":\"作者用户 id。发布时由服务端按登录用户写入\"},\"icon\":{\"type\":\"string\",\"description\":\"作者头像。热门列表会填充，其他接口通常省略\"},\"name\":{\"type\":\"string\",\"description\":\"作者昵称。热门列表会填充，其他接口通常省略\"},\"isLike\":{\"type\":\"boolean\",\"description\":\"当前用户是否已点赞。当前接口未赋值，响应中省略\"},\"title\":{\"type\":\"string\",\"description\":\"标题\"},\"images\":{\"type\":\"string\",\"description\":\"探店照片，最多 9 张，多张以英文逗号隔开\"},\"content\":{\"type\":\"string\",\"description\":\"探店文字描述\"},\"liked\":{\"type\":\"integer\",\"description\":\"点赞数量\"},\"comments\":{\"type\":\"integer\",\"description\":\"评论数量\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601\"}}}},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "需要登录。按当前用户 id 查询，每页 10 条，只返回当前页记录。"
+      },
+      {
+        "query_path": {
+          "path": "/blog/hot",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 3,
+        "tag": [],
+        "method": "GET",
+        "title": "查询热门笔记",
+        "path": "/blog/hot",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [],
+        "req_query": [
+          {
+            "required": "0",
+            "name": "current",
+            "desc": "页码，从 1 开始，默认 1",
+            "example": "1"
+          }
+        ],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"array\",\"description\":\"热门笔记列表，每页 10 条\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键\"},\"shopId\":{\"type\":\"integer\",\"description\":\"商户 id\"},\"userId\":{\"type\":\"integer\",\"description\":\"作者用户 id。发布时由服务端按登录用户写入\"},\"icon\":{\"type\":\"string\",\"description\":\"作者头像。热门列表会填充，其他接口通常省略\"},\"name\":{\"type\":\"string\",\"description\":\"作者昵称。热门列表会填充，其他接口通常省略\"},\"isLike\":{\"type\":\"boolean\",\"description\":\"当前用户是否已点赞。当前接口未赋值，响应中省略\"},\"title\":{\"type\":\"string\",\"description\":\"标题\"},\"images\":{\"type\":\"string\",\"description\":\"探店照片，最多 9 张，多张以英文逗号隔开\"},\"content\":{\"type\":\"string\",\"description\":\"探店文字描述\"},\"liked\":{\"type\":\"integer\",\"description\":\"点赞数量\"},\"comments\":{\"type\":\"integer\",\"description\":\"评论数量\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601\"}},\"required\":[\"id\"]}},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。按 liked 降序，每页 10 条。每条笔记会补上作者昵称 name 和头像 icon。"
+      }
+    ]
+  },
+  {
+    "index": 4,
+    "name": "优惠券",
+    "desc": "响应格式、登录态和访问前缀见「用户」分类说明。",
+    "add_time": 1790812800,
+    "up_time": 1790812800,
+    "list": [
+      {
+        "query_path": {
+          "path": "/voucher",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": true,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "method": "POST",
+        "title": "新增普通券",
+        "path": "/voucher",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "Content-Type",
+            "value": "application/json",
+            "desc": "请求体为 JSON"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"新建优惠券的 id\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键\"},\"shopId\":{\"type\":\"integer\",\"description\":\"商铺 id\"},\"title\":{\"type\":\"string\",\"description\":\"代金券标题\"},\"subTitle\":{\"type\":\"string\",\"description\":\"副标题\"},\"rules\":{\"type\":\"string\",\"description\":\"使用规则\"},\"payValue\":{\"type\":\"integer\",\"description\":\"支付金额，单位分。例如 200 表示 2 元\"},\"actualValue\":{\"type\":\"integer\",\"description\":\"抵扣金额，单位分。例如 200 表示 2 元\"},\"type\":{\"type\":\"integer\",\"description\":\"类型：0 普通券，1 秒杀券\"},\"status\":{\"type\":\"integer\",\"description\":\"状态：1 上架，2 下架，3 过期。列表接口未查出该字段\"},\"stock\":{\"type\":\"integer\",\"description\":\"秒杀库存。仅秒杀券有值\"},\"beginTime\":{\"type\":\"string\",\"description\":\"生效时间，ISO-8601。仅秒杀券有值\"},\"endTime\":{\"type\":\"string\",\"description\":\"失效时间，ISO-8601。仅秒杀券有值\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601。列表接口未查出该字段\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601。列表接口未查出该字段\"}},\"required\":[\"shopId\",\"title\",\"payValue\",\"actualValue\"]}",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。写入 tb_voucher 并返回优惠券 id。type 建议传 0。status 不传时数据库默认为 1（上架）。金额单位是分。"
+      },
+      {
+        "query_path": {
+          "path": "/voucher/seckill",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": true,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 1,
+        "tag": [],
+        "method": "POST",
+        "title": "新增秒杀券",
+        "path": "/voucher/seckill",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "Content-Type",
+            "value": "application/json",
+            "desc": "请求体为 JSON"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"新建秒杀券的 id\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键\"},\"shopId\":{\"type\":\"integer\",\"description\":\"商铺 id\"},\"title\":{\"type\":\"string\",\"description\":\"代金券标题\"},\"subTitle\":{\"type\":\"string\",\"description\":\"副标题\"},\"rules\":{\"type\":\"string\",\"description\":\"使用规则\"},\"payValue\":{\"type\":\"integer\",\"description\":\"支付金额，单位分。例如 200 表示 2 元\"},\"actualValue\":{\"type\":\"integer\",\"description\":\"抵扣金额，单位分。例如 200 表示 2 元\"},\"type\":{\"type\":\"integer\",\"description\":\"类型：0 普通券，1 秒杀券\"},\"status\":{\"type\":\"integer\",\"description\":\"状态：1 上架，2 下架，3 过期。列表接口未查出该字段\"},\"stock\":{\"type\":\"integer\",\"description\":\"秒杀库存。仅秒杀券有值\"},\"beginTime\":{\"type\":\"string\",\"description\":\"生效时间，ISO-8601。仅秒杀券有值\"},\"endTime\":{\"type\":\"string\",\"description\":\"失效时间，ISO-8601。仅秒杀券有值\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601。列表接口未查出该字段\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601。列表接口未查出该字段\"}},\"required\":[\"shopId\",\"title\",\"payValue\",\"actualValue\",\"stock\",\"beginTime\",\"endTime\"]}",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。同一事务内先保存优惠券，再保存秒杀库存。stock、beginTime、endTime 不是 tb_voucher 的列，只写入 tb_seckill_voucher。type 建议传 1。返回优惠券 id。"
+      },
+      {
+        "query_path": {
+          "path": "/voucher/list/{shopId}",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 2,
+        "tag": [],
+        "method": "GET",
+        "title": "查询店铺优惠券",
+        "path": "/voucher/list/{shopId}",
+        "req_params": [
+          {
+            "name": "shopId",
+            "desc": "商铺 id",
+            "example": "1"
+          }
+        ],
+        "req_body_form": [],
+        "req_headers": [],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"array\",\"description\":\"店铺上架中的优惠券\",\"items\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"integer\",\"description\":\"主键\"},\"shopId\":{\"type\":\"integer\",\"description\":\"商铺 id\"},\"title\":{\"type\":\"string\",\"description\":\"代金券标题\"},\"subTitle\":{\"type\":\"string\",\"description\":\"副标题\"},\"rules\":{\"type\":\"string\",\"description\":\"使用规则\"},\"payValue\":{\"type\":\"integer\",\"description\":\"支付金额，单位分。例如 200 表示 2 元\"},\"actualValue\":{\"type\":\"integer\",\"description\":\"抵扣金额，单位分。例如 200 表示 2 元\"},\"type\":{\"type\":\"integer\",\"description\":\"类型：0 普通券，1 秒杀券\"},\"status\":{\"type\":\"integer\",\"description\":\"状态：1 上架，2 下架，3 过期。列表接口未查出该字段\"},\"stock\":{\"type\":\"integer\",\"description\":\"秒杀库存。仅秒杀券有值\"},\"beginTime\":{\"type\":\"string\",\"description\":\"生效时间，ISO-8601。仅秒杀券有值\"},\"endTime\":{\"type\":\"string\",\"description\":\"失效时间，ISO-8601。仅秒杀券有值\"},\"createTime\":{\"type\":\"string\",\"description\":\"创建时间，ISO-8601。列表接口未查出该字段\"},\"updateTime\":{\"type\":\"string\",\"description\":\"更新时间，ISO-8601。列表接口未查出该字段\"}}}},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。只返回该店铺 status=1 的券。秒杀券额外带 stock、beginTime、endTime；普通券这些字段为空并被省略。本查询不返回 status、createTime、updateTime。"
+      }
+    ]
+  },
+  {
+    "index": 5,
+    "name": "优惠券订单",
+    "desc": "响应格式、登录态和访问前缀见「用户」分类说明。",
+    "add_time": 1790812800,
+    "up_time": 1790812800,
+    "list": [
+      {
+        "query_path": {
+          "path": "/voucher-order/seckill/{id}",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "undone",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "method": "POST",
+        "title": "秒杀下单",
+        "path": "/voucher-order/seckill/{id}",
+        "req_params": [
+          {
+            "name": "id",
+            "desc": "优惠券 id",
+            "example": "1"
+          }
+        ],
+        "req_body_form": [],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "authorization",
+            "value": "",
+            "example": "e7c8f0a1b2c34d5e6f708192a3b4c5d6",
+            "desc": "登录接口 data 中的 token。请求头名称为 authorization"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"当前无业务数据\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "需要登录。接口已暴露，业务未实现，当前固定返回 success=false，errorMsg=功能未完成。"
+      }
+    ]
+  },
+  {
+    "index": 6,
+    "name": "文件上传",
+    "desc": "响应格式、登录态和访问前缀见「用户」分类说明。",
+    "add_time": 1790812800,
+    "up_time": 1790812800,
+    "list": [
+      {
+        "query_path": {
+          "path": "/upload/blog",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 0,
+        "tag": [],
+        "method": "POST",
+        "title": "上传探店图片",
+        "path": "/upload/blog",
+        "req_params": [],
+        "req_body_form": [
+          {
+            "required": "1",
+            "name": "file",
+            "type": "file",
+            "desc": "图片文件"
+          }
+        ],
+        "req_headers": [
+          {
+            "required": "1",
+            "name": "Content-Type",
+            "value": "multipart/form-data",
+            "desc": "上传文件"
+          }
+        ],
+        "req_query": [],
+        "req_body_type": "form",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"保存后的相对路径，例如 /blogs/1/2/uuid.jpg\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。表单字段名为 file。服务端生成 /blogs/{d1}/{d2}/{uuid}.{后缀} 并保存到图片目录，data 返回该相对路径。保存失败时 errorMsg=服务器异常。"
+      },
+      {
+        "query_path": {
+          "path": "/upload/blog/delete",
+          "params": []
+        },
+        "edit_uid": 0,
+        "status": "done",
+        "type": "static",
+        "req_body_is_json_schema": false,
+        "res_body_is_json_schema": true,
+        "api_opened": false,
+        "index": 1,
+        "tag": [],
+        "method": "GET",
+        "title": "删除探店图片",
+        "path": "/upload/blog/delete",
+        "req_params": [],
+        "req_body_form": [],
+        "req_headers": [],
+        "req_query": [
+          {
+            "required": "1",
+            "name": "name",
+            "desc": "上传接口返回的相对路径",
+            "example": "/blogs/1/2/uuid.jpg"
+          }
+        ],
+        "req_body_type": "json",
+        "res_body_type": "json",
+        "res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"success\":{\"type\":\"boolean\",\"description\":\"是否成功\"},\"errorMsg\":{\"type\":\"string\",\"description\":\"失败原因。成功或为空时省略\"},\"data\":{\"type\":\"string\",\"description\":\"成功时无业务数据\"},\"total\":{\"type\":\"integer\",\"description\":\"分页总数。当前接口未赋值，响应中省略\"}},\"required\":[\"success\"]}",
+        "req_body_other": "",
+        "project_id": 0,
+        "catid": 0,
+        "uid": 0,
+        "add_time": 1790812800,
+        "up_time": 1790812800,
+        "markdown": "",
+        "desc": "无需登录。name 为上传接口返回的相对路径。name 指向目录时 success=false，errorMsg=错误的文件名称。"
+      }
+    ]
+  }
+]
