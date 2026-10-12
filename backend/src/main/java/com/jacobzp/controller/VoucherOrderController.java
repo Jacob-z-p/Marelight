@@ -42,4 +42,9 @@ public class VoucherOrderController {
         // 版本5: Redisson 分布式锁解决一人一单
         return voucherOrderService.seckillVoucher5(voucherId);
     }
+
+    @PostMapping("seckill/async/{id}")
+    public Result seckillVoucherAsync(@PathVariable("id") Long voucherId) {
+        return voucherOrderService.seckillVoucher6(voucherId);
+    }
 }

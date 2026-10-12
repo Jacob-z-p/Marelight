@@ -46,7 +46,18 @@ public interface IVoucherOrderService extends IService<VoucherOrder> {
     Result seckillVoucher5(Long voucherId);
 
     /**
+     * 购买优惠券-实现6
+     *  Redis 判断资格后把订单放入消息队列，请求立即返回
+     */
+    Result seckillVoucher6(Long voucherId);
+
+    /**
      * 创建订单
      */
     Result createVoucher(Long voucherId);
+
+    /**
+     * 消费者落库：扣减 MySQL 库存并插入订单
+     */
+    void handleVoucherOrder(Long orderId, Long userId, Long voucherId);
 }

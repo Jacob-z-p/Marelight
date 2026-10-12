@@ -20,4 +20,9 @@ public interface IVoucherService extends IService<Voucher> {
      * 添加秒杀券
      */
     void addSeckillVoucher(Voucher voucher);
+
+    /**
+     * 添加秒杀券，并把库存和起止时间写入 Redis
+     */
+    void addSeckillVoucherAndCache(Voucher voucher);
 }

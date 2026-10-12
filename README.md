@@ -20,7 +20,7 @@
 | 用户 | 手机号验证码登录、资料、关注 |
 | 签到 | 用户签到相关数据表与 Redis Key 预留 |
 
-前端已覆盖首页、店铺列表/详情、探店编辑与详情、登录、个人中心等页面。后端短信验证码登录与 Redis Token 会话已接通。店铺详情走缓存。秒杀可以下单：乐观锁防超卖，单机内一人一单。库存预热、异步下单，以及多台实例下的一人一单仍未做。
+前端已覆盖首页、店铺列表/详情、探店编辑与详情、登录、个人中心等页面。后端短信验证码登录与 Redis Token 会话已接通。店铺详情走缓存。秒杀有两条下单路径：同步路径用 Redisson 锁做一人一单，异步路径在 Redis 里判断资格后立刻返回，订单由消息队列写入数据库。逻辑过期和社交能力仍未做。
 
 ---
 
@@ -30,7 +30,7 @@
 | --- | --- |
 | 前端 | Vue 2、Element UI、Axios；由 Nginx 托管静态页并反向代理 API |
 | 后端 | Java 21、Spring Boot 4.1.1、Spring MVC（`spring-boot-starter-webmvc`）、MyBatis-Plus 3.5.17、Hutool |
-| 数据 | MySQL 8（`mysql-connector-j`）、Redis 7（Lettuce 连接池） |
+| 数据 | MySQL 8（`mysql-connector-j`）、Redis 7（Lettuce 连接池、Redisson 4.0.0） |
 | 运行 | 后端 `8081`，Nginx `8080`，浏览器只访问前端端口 |
 
 后端已从 Spring Boot 2.3 / Java 8 升到当前线。Servlet API 使用 Jakarta（`jakarta.servlet` / `jakarta.annotation`），Redis 配置在 `spring.data.redis` 下。
@@ -221,7 +221,7 @@ cd frontend
 
 ## 当前进度
 
-前后端已能联调。后端跑在 Spring Boot 4.1.1 + Java 21。店铺详情经 `CacheClient` 查 Redis，未命中时抢互斥锁再查 MySQL；登录会话走 Redis。秒杀在单机上可以完成下单。逻辑过期、多实例一人一单和社交能力仍未接。
+前后端已能联调。后端跑在 Spring Boot 4.1.1 + Java 21。店铺详情经 `CacheClient` 查 Redis，未命中时抢互斥锁再查 MySQL；登录会话走 Redis。秒杀同步下单用 Redisson，异步下单用 Redis Stream。逻辑过期和社交能力仍未接。
 
 | 能力 | 状态 |
 | --- | --- |
@@ -231,10 +231,10 @@ cd frontend
 | 图片上传 | 接口已有，依赖本机上传目录配置 |
 | 短信登录 / Token 会话 | 可用。验证码键 `login:code:{手机号}`（2 分钟），用户键 `login:token:{token}`（Hash，36000 秒）；无短信网关，验证码看 debug 日志；新手机号会自动建用户 |
 | 登录拦截与登出 | 可用。刷新拦截器还原用户并续期，登录拦截器对非白名单返回 HTTP 401；登出删除 Redis Token |
-| 优惠券秒杀 | 可用（单机）。`POST /voucher/seckill` 在一个事务里写入优惠券和秒杀库存。`POST /voucher-order/seckill/{id}` 校验秒杀时间，用 `stock > 0` 扣库存防止超卖，再按用户加锁保证一人一单。订单号由 `RedisIdWorker` 生成。两台及以上实例时，一人一单会失效。Redis 库存预热和异步下单未做 |
+| 优惠券秒杀 | 可用。`POST /voucher/seckill` 写入两张表，并把库存和起止时间放进 Redis。`POST /voucher-order/seckill/{id}` 走 `seckillVoucher5`：`stock > 0` 防超卖，Redisson 锁 `lock:order:{userId}` 保证多实例下的一人一单。`POST /voucher-order/seckill/async/{id}` 走 `seckillVoucher6`：Lua 判断库存和一人一单，订单写入 `stream.orders` 后立即返回，消费者再落库。订单号由 `RedisIdWorker` 生成。页面上的抢购按钮仍打同步接口 |
 | 关注、评论、签到、附近店铺 GEO、Feed | 表或 Key 已预留，业务未接 |
 
-`RedisConstants` 里店铺缓存、空值、互斥锁，以及订单号用的按日自增已经在使用。秒杀库存、点赞、Feed、GEO、签到等 Key 仍只是约定。
+`RedisConstants` 里店铺缓存、空值、互斥锁、订单号按日自增，以及秒杀库存、已购用户、起止时间和订单流已经在使用。点赞、Feed、GEO、签到等 Key 仍只是约定。
 
 ---
 
@@ -242,7 +242,7 @@ cd frontend
 
 1. ~~**会话**：手机验证码登录、Token 存 Redis、登录拦截与登出~~（已完成）
 2. **缓存**：店铺详情已抽到 `CacheClient`。击穿用互斥锁，穿透用空值，过期时间加了随机量。逻辑过期仍未做
-3. **秒杀**：~~全局 ID、乐观锁防超卖、单机一人一单~~（已完成）。库存预热、异步下单、多实例一人一单仍未做
+3. **秒杀**：~~全局 ID、乐观锁防超卖、Redisson 一人一单、库存预热、Redis Stream 异步下单~~（已完成）
 4. **社交**：点赞去重、关注、Feed 时间线
 5. **附近与签到**：GEO 搜店、位图签到
 

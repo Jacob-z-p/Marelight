@@ -7,6 +7,8 @@ import com.jacobzp.mapper.VoucherMapper;
 import com.jacobzp.entity.SeckillVoucher;
 import com.jacobzp.service.ISeckillVoucherService;
 import com.jacobzp.service.IVoucherService;
+import com.jacobzp.service.SeckillVoucherCache;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,8 @@ public class VoucherServiceImpl extends ServiceImpl<VoucherMapper, Voucher> impl
 
     @Resource
     private ISeckillVoucherService seckillVoucherService;
+    @Resource
+    private SeckillVoucherCache seckillVoucherCache;
 
     @Override
     public Result queryVoucherOfShop(Long shopId) {
@@ -55,5 +59,13 @@ public class VoucherServiceImpl extends ServiceImpl<VoucherMapper, Voucher> impl
         seckillVoucher.setBeginTime(voucher.getBeginTime());
         seckillVoucher.setEndTime(voucher.getEndTime());
         seckillVoucherService.save(seckillVoucher);
+    }
+
+    @Override
+    public void addSeckillVoucherAndCache(Voucher voucher) {
+        // 走代理，让 addSeckillVoucher 上的事务先提交，再写 Redis
+        IVoucherService proxy = (IVoucherService) AopContext.currentProxy();
+        proxy.addSeckillVoucher(voucher);
+        seckillVoucherCache.cache(voucher);
     }
 }

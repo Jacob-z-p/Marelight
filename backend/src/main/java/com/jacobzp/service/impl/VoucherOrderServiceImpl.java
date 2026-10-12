@@ -16,10 +16,15 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -31,6 +36,19 @@ import java.time.LocalDateTime;
  */
 @Service
 public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, VoucherOrder> implements IVoucherOrderService {
+
+    private static final DefaultRedisScript<Long> SECKILL_SCRIPT = new DefaultRedisScript<>("""
+            local stock = tonumber(redis.call('get', KEYS[1]))
+            if stock == nil or stock <= 0 then
+                return 1
+            end
+            if redis.call('sismember', KEYS[2], ARGV[1]) == 1 then
+                return 2
+            end
+            redis.call('incrby', KEYS[1], -1)
+            redis.call('sadd', KEYS[2], ARGV[1])
+            return 0
+            """, Long.class);
 
     @Resource
     private ISeckillVoucherService seckillVoucherService;
@@ -279,6 +297,68 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * 购买优惠券-实现6
+     *  资格判断在 Redis 里完成，订单写入队列后立即返回
+     */
+    @Override
+    public Result seckillVoucher6(Long voucherId) {
+        Map<Object, Object> info = stringRedisTemplate.opsForHash()
+                .entries(RedisConstants.SECKILL_INFO_KEY + voucherId);
+        if (info.isEmpty()) {
+            return Result.fail("秒杀券不存在");
+        }
+        LocalDateTime beginTime = LocalDateTime.parse(info.get("beginTime").toString());
+        LocalDateTime endTime = LocalDateTime.parse(info.get("endTime").toString());
+        if (beginTime.isAfter(LocalDateTime.now())) {
+            return Result.fail("秒杀尚未开始");
+        }
+        if (endTime.isBefore(LocalDateTime.now())) {
+            return Result.fail("秒杀已经结束");
+        }
+
+        Long userId = UserHolder.getUser().getId();
+        Long result = stringRedisTemplate.execute(
+                SECKILL_SCRIPT,
+                List.of(RedisConstants.SECKILL_STOCK_KEY + voucherId, RedisConstants.SECKILL_ORDER_KEY + voucherId),
+                userId.toString()
+        );
+        if (result == null || result == 1) {
+            return Result.fail("库存不足");
+        }
+        if (result == 2) {
+            return Result.fail("用户已购买");
+        }
+
+        long orderId = redisIdWorker.nextId("seckillOrder");
+        Map<String, String> message = new HashMap<>();
+        message.put("id", String.valueOf(orderId));
+        message.put("userId", userId.toString());
+        message.put("voucherId", voucherId.toString());
+        stringRedisTemplate.opsForStream().add(
+                StreamRecords.mapBacked(message).withStreamKey(RedisConstants.SECKILL_STREAM_KEY)
+        );
+        return Result.ok(orderId);
+    }
+
+    @Override
+    @Transactional
+    public void handleVoucherOrder(Long orderId, Long userId, Long voucherId) {
+        boolean success = seckillVoucherService.update()
+                .setSql("stock = stock - 1")
+                .eq("voucher_id", voucherId)
+                .gt("stock", 0)
+                .update();
+        if (!success) {
+            throw new IllegalStateException("库存不足");
+        }
+        VoucherOrder voucherOrder = new VoucherOrder();
+        voucherOrder.setId(orderId);
+        voucherOrder.setUserId(userId);
+        voucherOrder.setVoucherId(voucherId);
+        save(voucherOrder);
     }
 
     @Transactional // tb_seckill_voucher、tb_voucher_order 两张表
