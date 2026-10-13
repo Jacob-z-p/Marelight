@@ -9,7 +9,9 @@ import cn.hutool.core.util.StrUtil;
 import com.jacobzp.service.IUserInfoService;
 import com.jacobzp.service.IUserService;
 import com.jacobzp.utils.RedisConstants;
+import com.jacobzp.utils.SessionConstants;
 import com.jacobzp.utils.UserHolder;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * 前端控制器
  * </p>
  *
- * @author 虎哥
- * @since 2021-12-22
+ * @author jacobzp
  */
 @Slf4j
 @RestController
@@ -40,28 +41,56 @@ public class UserController {
     private StringRedisTemplate stringRedisTemplate;
 
     /**
-     * 发送手机验证码
+     * 基于session发送手机验证码
      */
-    @PostMapping("code")
-    public Result sendCode(@RequestParam("phone") String phone) {
-        // 调用service层接口实现“发送并保存短信验证码”
-        return userService.sendCode(phone);
+     @PostMapping("code")
+    public Result sendCodeBySession(@RequestParam("phone") String phone, HttpSession session) {
+        // 调用service层接口实现“校验、保存并发送短信验证码”
+        return userService.sendCodeBySession(phone, session);
     }
 
     /**
-     * 登录功能
+     * 基于Redis发送手机验证码
+     */
+//    @PostMapping("code")
+    public Result sendCodeByRedis(@RequestParam("phone") String phone) {
+        // 调用service层接口实现“校验、保存并发送短信验证码”
+        return userService.sendCodeByRedis(phone);
+    }
+
+
+    /**
+     * 基于session实现登录功能
      * @param loginForm 登录参数，包含手机号、验证码；或者手机号、密码
      */
     @PostMapping("/login")
-    public Result login(@RequestBody LoginFormDTO loginForm){
-        return userService.login(loginForm);
+    public Result loginBySession(@RequestBody LoginFormDTO loginForm, HttpSession session){
+        return userService.loginBySession(loginForm, session);
+    }
+
+
+    /**
+     * 基于Redis实现登录功能
+     * @param loginForm 登录参数，包含手机号、验证码；或者手机号、密码
+     */
+//    @PostMapping("/login")
+    public Result loginByRedis(@RequestBody LoginFormDTO loginForm){
+        return userService.loginByRedis(loginForm);
     }
 
     /**
-     * 登出功能
-     * @return 无
+     * 基于session实现登出功能
      */
     @PostMapping("/logout")
+    public Result logout(HttpSession session) {
+        session.removeAttribute(SessionConstants.LOGIN_USER);
+        return Result.ok();
+    }
+
+    /**
+     * 基于redis实现登出功能
+     */
+//    @PostMapping("/logout")
     public Result logout(HttpServletRequest request){
         // 1.删除redis中的登录用户
         String token = request.getHeader("authorization");

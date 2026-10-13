@@ -2,9 +2,9 @@ package com.jacobzp.utils;
 
 public class RedisConstants {
     public static final String LOGIN_CODE_KEY = "login:code:";
-    public static final Long LOGIN_CODE_TTL = 2L;
+    public static final Long LOGIN_CODE_TTL = 1L;   // 验证码有效期:1分钟
     public static final String LOGIN_USER_KEY = "login:token:";
-    public static final Long LOGIN_USER_TTL = 36000L;
+    public static final Long LOGIN_USER_TTL = 300L; // 用户token有效期:5小时
 
     public static final Long CACHE_NULL_TTL = 2L;
 

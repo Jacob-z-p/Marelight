@@ -3,6 +3,7 @@ package com.jacobzp.controller;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.jacobzp.dto.Result;
+import com.jacobzp.utils.MessageConstants;
 import com.jacobzp.utils.SystemConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class UploadController {
     public Result deleteBlogImg(@RequestParam("name") String filename) {
         File file = new File(SystemConstants.IMAGE_UPLOAD_DIR, filename);
         if (file.isDirectory()) {
-            return Result.fail("错误的文件名称");
+            return Result.fail(MessageConstants.INVALID_FILE_NAME);
         }
         FileUtil.del(file);
         return Result.ok();

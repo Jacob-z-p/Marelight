@@ -5,6 +5,7 @@ import com.jacobzp.entity.Shop;
 import com.jacobzp.mapper.ShopMapper;
 import com.jacobzp.service.IShopService;
 import com.jacobzp.utils.CacheClient;
+import com.jacobzp.utils.MessageConstants;
 import com.jacobzp.utils.RedisConstants;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -51,7 +52,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
                 TimeUnit.MINUTES
         );
         if (shop == null) {
-            return Result.fail("店铺不存在");
+            return Result.fail(MessageConstants.SHOP_NOT_FOUND);
         }
         // 2.返回成功信息
         return Result.ok(shop);
@@ -66,7 +67,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
     public Result update(Shop shop) {
         Long id = shop.getId();
         if (id == null) {
-            return Result.fail("店铺id不能为空");
+            return Result.fail(MessageConstants.SHOP_ID_REQUIRED);
         }
         // 1.先更新数据库
         updateById(shop);

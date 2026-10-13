@@ -7,6 +7,7 @@ import com.jacobzp.mapper.VoucherOrderMapper;
 import com.jacobzp.service.ISeckillVoucherService;
 import com.jacobzp.service.IVoucherOrderService;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
+import com.jacobzp.utils.MessageConstants;
 import com.jacobzp.utils.RedisConstants;
 import com.jacobzp.utils.RedisIdWorker;
 import com.jacobzp.utils.SimpleRedisLock;
@@ -76,18 +77,18 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         // 2.判断秒杀是否开始和结束
         if (voucher.getBeginTime().isAfter(LocalDateTime.now())) {
             // 抢购时间还没开始
-            return Result.fail("秒杀尚未开始");
+            return Result.fail(MessageConstants.SECKILL_NOT_START);
         }
         if (voucher.getEndTime().isBefore(LocalDateTime.now())) {
             // 抢购时间结束
-            return Result.fail("秒杀已经结束");
+            return Result.fail(MessageConstants.SECKILL_ENDED);
         }
 
         // 3.判断库存是否充足
         Integer stock = voucher.getStock();
         if (stock < 1) {
             // 库存不足
-            return Result.fail("库存不足");
+            return Result.fail(MessageConstants.STOCK_NOT_ENOUGH);
         }
 
         // 4.扣减库存
@@ -97,7 +98,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
                 .update();
         if (!success) {
             // 可能也是库存不足导致的
-            return Result.fail("库存不足");
+            return Result.fail(MessageConstants.STOCK_NOT_ENOUGH);
         }
 
         // 5.创建订单
@@ -132,11 +133,11 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         // 2.判断秒杀是否开始和结束
         if (voucher.getBeginTime().isAfter(LocalDateTime.now())) {
             // 抢购时间还没开始
-            return Result.fail("秒杀尚未开始");
+            return Result.fail(MessageConstants.SECKILL_NOT_START);
         }
         if (voucher.getEndTime().isBefore(LocalDateTime.now())) {
             // 抢购时间结束
-            return Result.fail("秒杀已经结束");
+            return Result.fail(MessageConstants.SECKILL_ENDED);
         }
 
         // 3.扣减库存
@@ -147,7 +148,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
                 .update();
         if (!success) {
             // 可能也是库存不足导致的
-            return Result.fail("库存不足");
+            return Result.fail(MessageConstants.STOCK_NOT_ENOUGH);
         }
 
         // 4.创建订单
@@ -182,18 +183,18 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         // 2.判断秒杀是否开始和结束
         if (voucher.getBeginTime().isAfter(LocalDateTime.now())) {
             // 抢购时间还没开始
-            return Result.fail("秒杀尚未开始");
+            return Result.fail(MessageConstants.SECKILL_NOT_START);
         }
         if (voucher.getEndTime().isBefore(LocalDateTime.now())) {
             // 抢购时间结束
-            return Result.fail("秒杀已经结束");
+            return Result.fail(MessageConstants.SECKILL_ENDED);
         }
 
         // 3.判断库存是否充足
         Integer stock = voucher.getStock();
         if (stock < 1) {
             // 库存不足
-            return Result.fail("库存不足");
+            return Result.fail(MessageConstants.STOCK_NOT_ENOUGH);
         }
 
         Long userId = UserHolder.getUser().getId();
@@ -226,18 +227,18 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         // 2.判断秒杀是否开始和结束
         if (voucher.getBeginTime().isAfter(LocalDateTime.now())) {
             // 抢购时间还没开始
-            return Result.fail("秒杀尚未开始");
+            return Result.fail(MessageConstants.SECKILL_NOT_START);
         }
         if (voucher.getEndTime().isBefore(LocalDateTime.now())) {
             // 抢购时间结束
-            return Result.fail("秒杀已经结束");
+            return Result.fail(MessageConstants.SECKILL_ENDED);
         }
 
         // 3.判断库存是否充足
         Integer stock = voucher.getStock();
         if (stock < 1) {
             // 库存不足
-            return Result.fail("库存不足");
+            return Result.fail(MessageConstants.STOCK_NOT_ENOUGH);
         }
 
         Long userId = UserHolder.getUser().getId();
@@ -245,7 +246,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         SimpleRedisLock lock = new SimpleRedisLock("order:" + userId, stringRedisTemplate);
         boolean locked = lock.tryLock(RedisConstants.LOCK_ORDER_TTL);
         if (!locked) {
-            return Result.fail("不允许重复下单");
+            return Result.fail(MessageConstants.REPEAT_ORDER);
         }
         try {
             // 走代理，等 createVoucher 的事务提交后再放锁
@@ -269,18 +270,18 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         // 2.判断秒杀是否开始和结束
         if (voucher.getBeginTime().isAfter(LocalDateTime.now())) {
             // 抢购时间还没开始
-            return Result.fail("秒杀尚未开始");
+            return Result.fail(MessageConstants.SECKILL_NOT_START);
         }
         if (voucher.getEndTime().isBefore(LocalDateTime.now())) {
             // 抢购时间结束
-            return Result.fail("秒杀已经结束");
+            return Result.fail(MessageConstants.SECKILL_ENDED);
         }
 
         // 3.判断库存是否充足
         Integer stock = voucher.getStock();
         if (stock < 1) {
             // 库存不足
-            return Result.fail("库存不足");
+            return Result.fail(MessageConstants.STOCK_NOT_ENOUGH);
         }
 
         Long userId = UserHolder.getUser().getId();
@@ -288,7 +289,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         RLock lock = redissonClient.getLock("lock:order:" + userId);
         boolean locked = lock.tryLock();
         if (!locked) {
-            return Result.fail("不允许重复下单");
+            return Result.fail(MessageConstants.REPEAT_ORDER);
         }
         try {
             // 走代理，等 createVoucher 的事务提交后再放锁
@@ -308,15 +309,15 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         Map<Object, Object> info = stringRedisTemplate.opsForHash()
                 .entries(RedisConstants.SECKILL_INFO_KEY + voucherId);
         if (info.isEmpty()) {
-            return Result.fail("秒杀券不存在");
+            return Result.fail(MessageConstants.SECKILL_VOUCHER_NOT_FOUND);
         }
         LocalDateTime beginTime = LocalDateTime.parse(info.get("beginTime").toString());
         LocalDateTime endTime = LocalDateTime.parse(info.get("endTime").toString());
         if (beginTime.isAfter(LocalDateTime.now())) {
-            return Result.fail("秒杀尚未开始");
+            return Result.fail(MessageConstants.SECKILL_NOT_START);
         }
         if (endTime.isBefore(LocalDateTime.now())) {
-            return Result.fail("秒杀已经结束");
+            return Result.fail(MessageConstants.SECKILL_ENDED);
         }
 
         Long userId = UserHolder.getUser().getId();
@@ -326,10 +327,10 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
                 userId.toString()
         );
         if (result == null || result == 1) {
-            return Result.fail("库存不足");
+            return Result.fail(MessageConstants.STOCK_NOT_ENOUGH);
         }
         if (result == 2) {
-            return Result.fail("用户已购买");
+            return Result.fail(MessageConstants.ALREADY_PURCHASED);
         }
 
         long orderId = redisIdWorker.nextId("seckillOrder");
@@ -374,7 +375,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         // 5.判断订单是否存在
         if (count > 0) {
             // 用户已经购买过了
-            return Result.fail("用户已购买");
+            return Result.fail(MessageConstants.ALREADY_PURCHASED);
         }
         // 6.扣减库存
         boolean success = seckillVoucherService.update()
@@ -384,7 +385,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
                 .update();
         if (!success) {
             // 可能也是库存不足导致的
-            return Result.fail("库存不足");
+            return Result.fail(MessageConstants.STOCK_NOT_ENOUGH);
         }
 
         // 6.创建订单
