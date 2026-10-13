@@ -43,7 +43,7 @@ public class UserController {
     /**
      * 基于session发送手机验证码
      */
-     @PostMapping("code")
+//     @PostMapping("code")
     public Result sendCodeBySession(@RequestParam("phone") String phone, HttpSession session) {
         // 调用service层接口实现“校验、保存并发送短信验证码”
         return userService.sendCodeBySession(phone, session);
@@ -52,7 +52,7 @@ public class UserController {
     /**
      * 基于Redis发送手机验证码
      */
-//    @PostMapping("code")
+    @PostMapping("code")
     public Result sendCodeByRedis(@RequestParam("phone") String phone) {
         // 调用service层接口实现“校验、保存并发送短信验证码”
         return userService.sendCodeByRedis(phone);
@@ -63,7 +63,7 @@ public class UserController {
      * 基于session实现登录功能
      * @param loginForm 登录参数，包含手机号、验证码；或者手机号、密码
      */
-    @PostMapping("/login")
+//    @PostMapping("/login")
     public Result loginBySession(@RequestBody LoginFormDTO loginForm, HttpSession session){
         return userService.loginBySession(loginForm, session);
     }
@@ -73,7 +73,7 @@ public class UserController {
      * 基于Redis实现登录功能
      * @param loginForm 登录参数，包含手机号、验证码；或者手机号、密码
      */
-//    @PostMapping("/login")
+    @PostMapping("/login")
     public Result loginByRedis(@RequestBody LoginFormDTO loginForm){
         return userService.loginByRedis(loginForm);
     }
@@ -81,7 +81,7 @@ public class UserController {
     /**
      * 基于session实现登出功能
      */
-    @PostMapping("/logout")
+//    @PostMapping("/logout")
     public Result logout(HttpSession session) {
         session.removeAttribute(SessionConstants.LOGIN_USER);
         return Result.ok();
@@ -90,7 +90,7 @@ public class UserController {
     /**
      * 基于redis实现登出功能
      */
-//    @PostMapping("/logout")
+    @PostMapping("/logout")
     public Result logout(HttpServletRequest request){
         // 1.删除redis中的登录用户
         String token = request.getHeader("authorization");

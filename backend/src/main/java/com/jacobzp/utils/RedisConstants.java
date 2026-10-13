@@ -4,7 +4,10 @@ public class RedisConstants {
     public static final String LOGIN_CODE_KEY = "login:code:";
     public static final Long LOGIN_CODE_TTL = 1L;   // 验证码有效期:1分钟
     public static final String LOGIN_USER_KEY = "login:token:";
-    public static final Long LOGIN_USER_TTL = 300L; // 用户token有效期:5小时
+    /** 滑动过期，单位分钟（5小时）。只允许与 TimeUnit.MINUTES 一起使用。 */
+    public static final Long LOGIN_USER_TTL = 300L;
+    /** 绝对上限，单位天。滑动续期不能超过登录时刻加上这个时长。 */
+    public static final Long LOGIN_USER_ABSOLUTE_TTL = 7L;
 
     public static final Long CACHE_NULL_TTL = 2L;
 

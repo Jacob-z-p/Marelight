@@ -1,11 +1,12 @@
 package com.jacobzp.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.jacobzp.dto.LoginFormDTO;
+import com.jacobzp.dto.LoginSession;
 import com.jacobzp.dto.Result;
 import com.jacobzp.dto.UserDTO;
 import com.jacobzp.entity.User;
@@ -22,8 +23,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -185,16 +184,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (user == null) {
             user = createUserWithPhone(phone);
         }
-        // 5.只把UserDTO写入redis，避免保存密码
+        // 5.只把用户信息和登录时间写入redis，避免保存密码。SET 与过期时间一次完成
         String token = UUID.randomUUID().toString(true); // 获取用户令牌
         String tokenKey = RedisConstants.LOGIN_USER_KEY + token; // 用户的键
-        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class); // User转成UserDTO
-        Map<String, Object> userMap = BeanUtil.beanToMap(userDTO, new HashMap<>(), // hutool工具类
-                CopyOptions.create()
-                        .setIgnoreNullValue(true)   // 空值不进入hash
-                        .setFieldValueEditor((fieldName, fieldValue) -> fieldValue.toString())); // 值转为String
-        stringRedisTemplate.opsForHash().putAll(tokenKey, userMap); // 用户信息存入hash
-        stringRedisTemplate.expire(tokenKey, RedisConstants.LOGIN_USER_TTL, TimeUnit.MINUTES); // 设置令牌时间
+        LoginSession session = new LoginSession();
+        session.setUser(BeanUtil.copyProperties(user, UserDTO.class));
+        session.setLoginAt(System.currentTimeMillis());
+        stringRedisTemplate.opsForValue().set(
+                tokenKey,
+                JSONUtil.toJsonStr(session),
+                RedisConstants.LOGIN_USER_TTL,
+                TimeUnit.MINUTES
+        );
         // 6.验证码只用一次
         stringRedisTemplate.delete(RedisConstants.LOGIN_CODE_KEY + phone);
         // 7.返回token
