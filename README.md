@@ -2,7 +2,10 @@
 
 本地生活发现平台。逛店铺、写探店、领优惠，把附近值得去的地方点亮。
 
-当前仓库已纳入前后端模块，业务能力按阶段推进。打开本文件即可了解项目是什么、怎么跑、代码在哪、接下来做什么。
+当前仓库已纳入前后端模块，业务能力按阶段推进。本文件说明项目是什么、怎么跑、代码在哪、接下来做什么。模块细节见：
+
+- [frontend/README.md](frontend/README.md)：Nginx 与静态页面
+- [backend/README.md](backend/README.md)：Spring Boot 服务
 
 [功能概览](#功能概览) · [技术栈](#技术栈) · [架构](#架构) · [仓库结构](#仓库结构) · [快速开始](#快速开始) · [配置](#配置) · [当前进度](#当前进度)
 
@@ -78,7 +81,7 @@ Marelight/
     └── html/hmdp/                Vue 页面、样式、脚本
 ```
 
-后端入口：`com.jacobzp.HmDianPingApplication`。
+后端入口：`com.jacobzp.MarelightApplication`。
 
 主要 HTTP 前缀：
 
@@ -247,3 +250,13 @@ cd frontend
 5. **附近与签到**：GEO 搜店、位图签到
 
 欢迎按模块提交改动。提交前确认未把本机密码、日志和 `frontend/logs/` 打进版本库。
+
+## 交流学习
+
+👋 **欢迎来到`Marelight`社区交流**
+
+- QQ群：`285597022`
+
+<p align="left">
+  <img src="./assets/qq-group.jpg" alt="QQ群" width="280">
+</p>
