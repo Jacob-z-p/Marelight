@@ -53,9 +53,9 @@ public class UserController {
      * 基于Redis发送手机验证码
      */
     @PostMapping("code")
-    public Result sendCodeByRedis(@RequestParam("phone") String phone) {
+    public Result sendCodeByRedis(@RequestParam("phone") String phone, HttpServletRequest request) {
         // 调用service层接口实现“校验、保存并发送短信验证码”
-        return userService.sendCodeByRedis(phone);
+        return userService.sendCodeByRedis(phone, clientIp(request));
     }
 
 
@@ -123,5 +123,26 @@ public class UserController {
         info.setUpdateTime(null);
         // 返回
         return Result.ok(info);
+    }
+
+    /**
+     * 经本机 Nginx 转发时采信 X-Forwarded-For，直接访问后端时用连接地址，避免伪造。
+     */
+    private String clientIp(HttpServletRequest request) {
+        String remote = request.getRemoteAddr();
+        if (isLoopback(remote)) {
+            String forwarded = request.getHeader("X-Forwarded-For");
+            if (StrUtil.isNotBlank(forwarded)) {
+                String first = forwarded.split(",")[0].trim();
+                if (StrUtil.isNotBlank(first)) {
+                    return first;
+                }
+            }
+        }
+        return remote;
+    }
+
+    private boolean isLoopback(String ip) {
+        return "127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip) || "::1".equals(ip);
     }
 }

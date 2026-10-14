@@ -60,6 +60,9 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    /**
+     * 读取redis中的用户token信息
+     */
     private String readSession(String key) {
         try {
             return stringRedisTemplate.opsForValue().get(key);

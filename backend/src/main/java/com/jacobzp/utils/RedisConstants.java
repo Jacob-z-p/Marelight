@@ -3,6 +3,16 @@ package com.jacobzp.utils;
 public class RedisConstants {
     public static final String LOGIN_CODE_KEY = "login:code:";
     public static final Long LOGIN_CODE_TTL = 1L;   // 验证码有效期:1分钟
+    public static final String LOGIN_CODE_INTERVAL_KEY = "login:code:interval:";
+    public static final Long LOGIN_CODE_INTERVAL_TTL = 60L; // 发送间隔，单位秒
+    public static final String LOGIN_CODE_PHONE_COUNT_KEY = "login:code:count:phone:";
+    public static final String LOGIN_CODE_IP_COUNT_KEY = "login:code:count:ip:";
+    public static final Long LOGIN_CODE_COUNT_TTL = 86400L; // 每日计数窗口，单位秒
+    public static final int LOGIN_CODE_PHONE_LIMIT = 10;
+    public static final int LOGIN_CODE_IP_LIMIT = 20;
+    public static final String LOGIN_CODE_MARK_KEY = "login:code:mark:";
+    public static final Long LOGIN_CODE_MARK_TTL = 5L; // 发送标记保留时间，单位分钟
+    public static final String LOGIN_CODE_ERRORS_KEY = "login:code:errors:";
     public static final String LOGIN_USER_KEY = "login:token:";
     /** 滑动过期，单位分钟（5小时）。只允许与 TimeUnit.MINUTES 一起使用。 */
     public static final Long LOGIN_USER_TTL = 300L;

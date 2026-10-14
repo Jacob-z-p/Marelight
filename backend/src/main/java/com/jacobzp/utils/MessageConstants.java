@@ -5,6 +5,8 @@ public class MessageConstants {
     public static final String CODE_INVALID = "验证码错误";
     public static final String CODE_EXPIRED = "验证码已过期";
     public static final String CODE_ERROR_LIMIT = "验证码错误次数过多";
+    public static final String CODE_SEND_FREQUENT = "发送过于频繁";
+    public static final String CODE_SEND_LIMIT = "今日验证码发送次数已达上限";
     public static final String SECKILL_NOT_START = "秒杀尚未开始";
     public static final String SECKILL_ENDED = "秒杀已经结束";
     public static final String STOCK_NOT_ENOUGH = "库存不足";
